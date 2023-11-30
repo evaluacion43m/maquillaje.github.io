@@ -1,5 +1,3 @@
-// Archivo js/formulario.js
-
 // Obtén una referencia a la colección "maquillajes" en Firestore
 const maquillajesCollection = firebase.firestore().collection('maquillajes');
 
@@ -11,6 +9,7 @@ let editingIndex = -1;
 window.onload = actualizarTabla;
 
 function altaMaquillaje() {
+    // Obtén los valores del formulario
     const nombre = document.getElementById('nombre').value;
     const fechaLanzamientoString = document.getElementById('fechaLanzamiento').value;
     const fechaLanzamiento = new Date(fechaLanzamientoString);
@@ -18,6 +17,7 @@ function altaMaquillaje() {
     const tipo = document.getElementById('tipo').value;
     const precio = document.getElementById('precio').value;
 
+    // Verifica que todos los campos estén completos
     if (!nombre || !fechaLanzamiento || !marca || !tipo || !precio) {
         alert('Todos los campos son obligatorios');
         return;
@@ -50,6 +50,7 @@ function altaMaquillaje() {
         })
         .catch((error) => {
             console.error("Error al agregar maquillaje a Firestore:", error);
+            alert('Error al agregar maquillaje a Firestore. Consulta la consola para más detalles.');
         });
     } else {
         // Editar maquillaje existente en Firestore
@@ -59,7 +60,7 @@ function altaMaquillaje() {
             fechaLanzamiento,
             marca,
             tipo,
-            precio
+            precio: parseFloat(precio)
         })
         .then(() => {
             console.log("Maquillaje actualizado en Firestore");
@@ -71,7 +72,7 @@ function altaMaquillaje() {
                 fechaLanzamiento,
                 marca,
                 tipo,
-                precio
+                precio: parseFloat(precio)
             };
 
             // Reinicia la variable de edición y el texto del botón
@@ -83,6 +84,7 @@ function altaMaquillaje() {
         })
         .catch((error) => {
             console.error("Error al actualizar maquillaje en Firestore:", error);
+            alert('Error al actualizar maquillaje en Firestore. Consulta la consola para más detalles.');
         });
     }
 
@@ -97,7 +99,7 @@ function actualizarTabla() {
     maquillajes.forEach((maquillaje, index) => {
         const row = table.insertRow();
         row.insertCell(0).innerHTML = maquillaje.nombre;
-        row.insertCell(1).innerHTML = maquillaje.fechaLanzamiento;
+        row.insertCell(1).innerHTML = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
         row.insertCell(2).innerHTML = maquillaje.marca;
         row.insertCell(3).innerHTML = maquillaje.tipo;
         row.insertCell(4).innerHTML = maquillaje.precio;
@@ -110,31 +112,5 @@ function actualizarTabla() {
 
 function editarMaquillaje(index) {
     const maquillaje = maquillajes[index];
-    document.getElementById('nombre').value = maquillaje.nombre;
-    document.getElementById('fechaLanzamiento').value = maquillaje.fechaLanzamiento;
-    document.getElementById('marca').value = maquillaje.marca;
-    document.getElementById('tipo').value = maquillaje.tipo;
-    document.getElementById('precio').value = maquillaje.precio;
-
-    editingIndex = index;
-    document.getElementById('submitBtn').innerText = 'Guardar Cambios';
-}
-
-function eliminarMaquillaje(index) {
-    const maquillajeID = maquillajes[index].id;
-
-    // Eliminar maquillaje de Firestore
-    maquillajesCollection.doc(maquillajeID).delete()
-    .then(() => {
-        console.log("Maquillaje eliminado de Firestore");
-
-        // Eliminar maquillaje de la lista local
-        maquillajes.splice(index, 1);
-
-        // Actualizar la tabla
-        actualizarTabla();
-    })
-    .catch((error) => {
-        console.error("Error al eliminar maquillaje de Firestore:", error);
-    });
+    document.getElementById('nombre').value = maquillaje.nombre
 }
