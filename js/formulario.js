@@ -29,6 +29,7 @@ window.onload = () => {
 };
 
 function altaMaquillaje() {
+    console.log('Entrando a altaMaquillaje');
     // Obtén los valores del formulario
     const nombre = document.getElementById('nombre').value;
     const fechaLanzamientoString = document.getElementById('fechaLanzamiento').value;
@@ -110,7 +111,9 @@ function altaMaquillaje() {
 
     // Limpiar el formulario (ya no es necesario actualizar la tabla aquí)
     document.getElementById('maquillajeForm').reset();
+    console.log('Saliendo de altaMaquillaje');
 }
+
 
 function cancelarEdicion() {
     editingIndex = -1;
