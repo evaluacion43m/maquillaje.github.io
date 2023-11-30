@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maquillaje</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="estilos.css">
+
+    <!-- Carga el núcleo de Firebase JS SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Agrega el manejo de autenticación. -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <!-- Inicializa Firebase con la configuración -->
+    <script src="js/init.js"></script>
+</head>
+
+<body>
+
+    <!-- Visualización de Datos de Sesión -->
+    <div id="sesion">
+        <fieldset>
+            <legend>Email</legend>
+            <output id="email"><progress max="100">Cargando…</progress></output>
+        </fieldset>
+        <fieldset>
+            <legend>Nombre</legend>
+            <output id="nombre"></output>
+        </fieldset>
+        <figure><img id="avatar" alt="Avatar"></figure>
+        <button type="button" onclick="iniciarSesion()">Iniciar Sesión con Google</button>
+        <button type="button" onclick="terminaSesion()">Cerrar Sesión</button>
+    </div>
+    
+
+    <h2>Maquillaje</h2>
+
+    <!-- Formulario -->
+    <form id="maquillajeForm">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required>
+
+        <label for="fechaLanzamiento">Fecha de Lanzamiento:</label>
+        <input type="date" id="fechaLanzamiento" required>
+
+        <label for="marca">Marca:</label>
+        <input type="text" id="marca" required>
+
+        <label for="tipo">Tipo:</label>
+        <input type="text" id="tipo" required>
+
+        <label for="precio">Precio:</label>
+        <input type="number" id="precio" required>
+
+        <button type="button" id="submitBtn" onclick="altaMaquillaje()">Agregar</button>
+    </form>
+
+    <table id="maquillajeTable">
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha de Lanzamiento</th>
+            <th>Marca</th>
+            <th>Tipo</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+        </tr>
+    </table>
+
+    <!-- Script para la autenticación y formulario -->
+    <script src="js/auth.js"></script>
+    <script src="js/formulario.js"></script>
+</body>
+
+</html>

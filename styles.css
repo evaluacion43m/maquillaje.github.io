@@ -1,0 +1,124 @@
+
+h1 {
+    color: #333;
+}
+
+fieldset {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, button {
+    margin-bottom: 10px;
+}
+
+
+output {
+    display: block;
+    margin-top: 5px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* otros estilos */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 20px;
+    background-color: #F5CEC7;
+    
+}
+
+h2 {
+    text-align: center;
+    /*background-color: #ffe6e6; /* Fondo relacionado con cosméticos */
+    padding: 10px;
+}
+
+form {
+    margin-top: 20px;
+    max-width: 400px; /* Limita el ancho del formulario */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+form input {
+    width: calc(100% - 16px); /* Reduce el ancho con un pequeño espacio */
+    padding: 8px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #ff4d4d; /* Color de fondo */
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ff4d4d; /* Cambio de color al pasar el ratón */
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ff4d4d;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #ff4d4d; /* Color de fondo de encabezado */
+    font-weight: bold;
+    color: white;
+}
+
+/* sección para estilos de la Sesión */
+#sesion {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-align: right;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+#sesion fieldset {
+    margin: 0; /* Elimina el margen del fieldset */
+}
+
+#sesion legend {
+    font-weight: bold;
+}
+
+#sesion button {
+    margin-left: 10px;
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#sesion button:hover {
+    background-color: #ff4d4d;
+}
