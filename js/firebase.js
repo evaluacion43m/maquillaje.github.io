@@ -4,11 +4,11 @@ import { altaMaquillaje, getMaquillajes, onGetMaquillajes, eliminarMaquillaje, g
 const maquillajeForm = document.getElementById("maquillajeForm");
 const maquillajeTable = document.getElementById("maquillajeTable");
 
-let editingIndex = -1;
+let maquillajes = [];  // Asegúrate de tener esta variable definida
 
 window.addEventListener("DOMContentLoaded", async () => {
   // Asegúrate de llamar a actualizarTabla() al cargar la página
-  actualizarTabla();
+  await actualizarTabla();
 
   maquillajeForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -21,69 +21,46 @@ window.addEventListener("DOMContentLoaded", async () => {
       const doc = await getMaquillajeById(e.target.dataset.id);
       const maquillaje = doc.data();
 
-      // Corrige el nombre de las propiedades
+      // Corrige el nombre de las propiedades según tu formulario
       maquillajeForm['nombre'].value = maquillaje.nombre;
       maquillajeForm['fechaLanzamiento'].value = maquillaje.fechaLanzamiento;
       maquillajeForm['marca'].value = maquillaje.marca;
       maquillajeForm['tipo'].value = maquillaje.tipo;
       maquillajeForm['precio'].value = maquillaje.precio;
 
+      // Asegúrate de tener esta línea
       editingIndex = doc.id;
 
+      // Asegúrate de tener esta línea
       maquillajeForm['submitBtn'].innerText = "Guardar Cambios";
     });
   });
 });
 
-function actualizarTabla() {
-    const table = document.getElementById('maquillajeTable');
-    table.innerHTML = '<tr><th>Nombre</th><th>Fecha de Lanzamiento</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Acciones</th></tr>';
+async function actualizarTabla() {
+  // Obtén los maquillajes antes de actualizar la tabla
+  maquillajes = await getMaquillajes();
 
-    maquillajes.forEach((maquillaje, index) => {
-        const row = table.insertRow();
-        row.insertCell(0).innerHTML = maquillaje.nombre;
-        row.insertCell(1).innerHTML = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
-        row.insertCell(2).innerHTML = maquillaje.marca;
-        row.insertCell(3).innerHTML = maquillaje.tipo;
-        row.insertCell(4).innerHTML = maquillaje.precio;
-        row.insertCell(5).innerHTML = `
-            <button onclick="editarMaquillaje(${index})">Editar</button>
-            <button onclick="eliminarMaquillaje(${index})">Eliminar</button>
-        `;
+  const table = document.getElementById('maquillajeTable');
+  table.innerHTML = '<tr><th>Nombre</th><th>Fecha de Lanzamiento</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Acciones</th></tr>';
+
+  maquillajes.forEach((maquillaje, index) => {
+    const row = table.insertRow();
+    row.insertCell(0).innerHTML = maquillaje.nombre;
+    row.insertCell(1).innerHTML = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
+    row.insertCell(2).innerHTML = maquillaje.marca;
+    row.insertCell(3).innerHTML = maquillaje.tipo;
+    row.insertCell(4).innerHTML = maquillaje.precio;
+    row.insertCell(5).innerHTML = `
+        <button class="btn-edit" data-id="${maquillaje.id}">Editar</button>
+        <button class="btn-delete" data-id="${maquillaje.id}">Eliminar</button>
+    `;
+  });
+
+  const btnsDelete = table.querySelectorAll('.btn-delete');
+  btnsDelete.forEach((btn) => {
+    btn.addEventListener('click', ({ target: { dataset } }) => {
+      eliminarMaquillaje(dataset.id);
     });
+  });
 }
-
-function editarMaquillaje(index) {
-    const maquillaje = maquillajes[index];
-    document.getElementById('nombre').value = maquillaje.nombre;
-    document.getElementById('fechaLanzamiento').value = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
-    document.getElementById('marca').value = maquillaje.marca;
-    document.getElementById('tipo').value = maquillaje.tipo;
-    document.getElementById('precio').value = maquillaje.precio;
-
-    editingIndex = index;
-    document.getElementById('submitBtn').innerText = 'Guardar Cambios';
-}
-
-function eliminarMaquillaje(index) {
-    const maquillajeID = maquillajes[index].id;
-
-    // Eliminar maquillaje de Firestore
-    maquillajesCollection.doc(maquillajeID).delete()
-    .then(() => {
-        console.log("Maquillaje eliminado de Firestore");
-
-        // Eliminar maquillaje de la lista local
-        maquillajes.splice(index, 1);
-
-        // Actualizar la tabla
-        actualizarTabla();
-    })
-    .catch((error) => {
-        console.error("Error al eliminar maquillaje de Firestore:", error);
-        alert('Error al eliminar maquillaje de Firestore. Consulta la consola para más detalles.');
-    });
-
-    console.log('Saliendo de altaMaquillaje');
-}
-
