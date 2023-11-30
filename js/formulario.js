@@ -111,7 +111,6 @@ function altaMaquillaje() {
 
     // Limpiar el formulario (ya no es necesario actualizar la tabla aquí)
     document.getElementById('maquillajeForm').reset();
-    console.log('Saliendo de altaMaquillaje');
 }
 
 
@@ -169,4 +168,6 @@ function eliminarMaquillaje(index) {
         console.error("Error al eliminar maquillaje de Firestore:", error);
         alert('Error al eliminar maquillaje de Firestore. Consulta la consola para más detalles.');
     });
+
+    console.log('Saliendo de altaMaquillaje');
 }
