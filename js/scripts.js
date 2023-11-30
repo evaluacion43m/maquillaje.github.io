@@ -1,25 +1,25 @@
-// Obtén una referencia a la colección "maquillajes" en Firestore
+// referencia a la colección "maquillajes" en Firestore
 const maquillajesCollection = firebase.firestore().collection('maquillajes');
 
 // Datos formulario
 let maquillajes = [];
 let editingIndex = -1;
 
-// Asegúrate de llamar a actualizarTabla() al cargar la página
+// llamar a actualizarTabla() al cargar la página
 window.onload = () => {
     actualizarTabla();
 
-    // Evento para agregar o editar maquillaje al hacer clic en el botón "Agregar/Guardar Cambios"
+    // agregar o editar maquillaje  en el botón "Agregar/Guardar Cambios"
     document.getElementById('submitBtn').addEventListener('click', () => {
         altaMaquillaje();
     });
 
-    // Evento para cancelar la edición al hacer clic en el botón "Cancelar"
+    // cancelar la edición al hacer clic en el botón "Cancelar"
     document.getElementById('cancelBtn').addEventListener('click', () => {
         cancelarEdicion();
     });
 
-    // Evento para eliminar maquillaje al hacer clic en el botón "Eliminar"
+    // eliminar maquillaje al hacer clic en el botón "Eliminar"
     document.getElementById('deleteBtn').addEventListener('click', () => {
         if (editingIndex !== -1) {
             eliminarMaquillaje(editingIndex);
@@ -30,7 +30,7 @@ window.onload = () => {
 
 function altaMaquillaje() {
     console.log('Entrando a altaMaquillaje');
-    // Obtén los valores del formulario
+    // valores del formulario
     const nombre = document.getElementById('nombre').value;
     const fechaLanzamientoString = document.getElementById('fechaLanzamiento').value;
     const fechaLanzamiento = new Date(fechaLanzamientoString);
@@ -38,7 +38,7 @@ function altaMaquillaje() {
     const tipo = document.getElementById('tipo').value;
     const precio = document.getElementById('precio').value;
 
-    // Verifica que todos los campos estén completos
+    // campos estén completos
     if (!nombre || !fechaLanzamiento || !marca || !tipo || !precio) {
         alert('Todos los campos son obligatorios');
         return;
@@ -55,6 +55,12 @@ function altaMaquillaje() {
         })
         .then((docRef) => {
             console.log("Maquillaje agregado a Firestore con ID:", docRef.id);
+
+            // Validar que la fecha sea válida antes de crear un objeto Date
+    if (isNaN(fechaLanzamiento.getTime())) {
+        alert('Fecha de lanzamiento no válida');
+        return;
+    }
 
             // Agregar el maquillaje a la lista local
             maquillajes.push({
@@ -145,7 +151,10 @@ function actualizarTabla() {
 function editarMaquillaje(index) {
     const maquillaje = maquillajes[index];
     document.getElementById('nombre').value = maquillaje.nombre;
-    document.getElementById('fechaLanzamiento').value = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
+    
+    //  el objeto Date
+    document.getElementById('fechaLanzamiento').value = maquillaje.fechaLanzamiento.toDate().toISOString().split('T')[0];
+
     document.getElementById('marca').value = maquillaje.marca;
     document.getElementById('tipo').value = maquillaje.tipo;
     document.getElementById('precio').value = maquillaje.precio;
@@ -153,6 +162,7 @@ function editarMaquillaje(index) {
     editingIndex = index;
     document.getElementById('submitBtn').innerText = 'Guardar Cambios';
 }
+
 
 function eliminarMaquillaje(index) {
     const maquillajeID = maquillajes[index].id;
