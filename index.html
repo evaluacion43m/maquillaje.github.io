@@ -83,62 +83,6 @@
 
     <!-- Script para la autenticación y formulario -->
     <script src="js/auth.js"></script>
-    <script>
-        // Obtén una referencia a la colección "maquillajes" en Firestore
-        const maquillajesCollection = firebase.firestore().collection('maquillajes');
-      
-        // Datos formulario
-        let maquillajes = [];
-        let editingIndex = -1;
-      
-        // Asegúrate de llamar a actualizarTabla() al cargar la página
-        window.onload = () => {
-          actualizarTabla();
-      
-          // Evento para agregar o editar maquillaje al hacer clic en el botón "Agregar/Guardar Cambios"
-          document.getElementById('submitBtn').addEventListener('click', () => {
-            altaMaquillaje();
-          });
-      
-          // Evento para cancelar la edición al hacer clic en el botón "Cancelar"
-          document.getElementById('cancelBtn').addEventListener('click', () => {
-            cancelarEdicion();
-          });
-      
-          // Evento para eliminar maquillaje al hacer clic en el botón "Eliminar"
-          document.getElementById('deleteBtn').addEventListener('click', () => {
-            if (editingIndex !== -1) {
-              eliminarMaquillaje(editingIndex);
-              cancelarEdicion();
-            }
-          });
-        };
-      
-        function altaMaquillaje() {
-          // ... (código existente)
-      
-          // Limpiar el formulario (ya no es necesario actualizar la tabla aquí)
-          document.getElementById('maquillajeForm').reset();
-          console.log('Saliendo de altaMaquillaje');
-        }
-      
-        function cancelarEdicion() {
-          // ... (código existente)
-        }
-      
-        function actualizarTabla() {
-          // ... (código existente)
-        }
-      
-        function editarMaquillaje(index) {
-          // ... (código existente)
-        }
-      
-        function eliminarMaquillaje(index) {
-          // ... (código existente)
-          console.log('Saliendo de altaMaquillaje');
-        }
-      </script>
 </body>
 
 </html>

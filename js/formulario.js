@@ -1,35 +1,5 @@
-// Obtén una referencia a la colección "maquillajes" en Firestore
-const maquillajesCollection = firebase.firestore().collection('maquillajes');
-
-// Datos formulario
-let maquillajes = [];
-let editingIndex = -1;
-
-// Asegúrate de llamar a actualizarTabla() al cargar la página
-window.onload = () => {
-    actualizarTabla();
-
-    // Evento para agregar o editar maquillaje al hacer clic en el botón "Agregar/Guardar Cambios"
-    document.getElementById('submitBtn').addEventListener('click', () => {
-        altaMaquillaje();
-    });
-
-    // Evento para cancelar la edición al hacer clic en el botón "Cancelar"
-    document.getElementById('cancelBtn').addEventListener('click', () => {
-        cancelarEdicion();
-    });
-
-    // Evento para eliminar maquillaje al hacer clic en el botón "Eliminar"
-    document.getElementById('deleteBtn').addEventListener('click', () => {
-        if (editingIndex !== -1) {
-            eliminarMaquillaje(editingIndex);
-            cancelarEdicion();
-        }
-    });
-};
-
+// Función para agregar un nuevo maquillaje
 function altaMaquillaje() {
-    console.log('Entrando a altaMaquillaje');
     // Obtén los valores del formulario
     const nombre = document.getElementById('nombre').value;
     const fechaLanzamientoString = document.getElementById('fechaLanzamiento').value;
@@ -47,79 +17,73 @@ function altaMaquillaje() {
     if (editingIndex === -1) {
         // Agregar nuevo maquillaje a Firestore
         maquillajesCollection.add({
-            nombre,
-            fechaLanzamiento: firebase.firestore.Timestamp.fromDate(fechaLanzamiento),
-            marca,
-            tipo,
-            precio: parseFloat(precio)
-        })
-        .then((docRef) => {
-            console.log("Maquillaje agregado a Firestore con ID:", docRef.id);
-
-            // Agregar el maquillaje a la lista local
-            maquillajes.push({
-                id: docRef.id,
                 nombre,
-                fechaLanzamiento,
+                fechaLanzamiento: firebase.firestore.Timestamp.fromDate(fechaLanzamiento),
                 marca,
                 tipo,
                 precio: parseFloat(precio)
-            });
+            })
+            .then((docRef) => {
+                console.log("Maquillaje agregado a Firestore con ID:", docRef.id);
 
-            // Actualizar la tabla
-            actualizarTabla();
-        })
-        .catch((error) => {
-            console.error("Error al agregar maquillaje a Firestore:", error);
-            alert('Error al agregar maquillaje a Firestore. Consulta la consola para más detalles.');
-        });
+                // Agregar el maquillaje a la lista local
+                maquillajes.push({
+                    id: docRef.id,
+                    nombre,
+                    fechaLanzamiento,
+                    marca,
+                    tipo,
+                    precio: parseFloat(precio)
+                });
+
+                // Actualizar la tabla
+                actualizarTabla();
+            })
+            .catch((error) => {
+                console.error("Error al agregar maquillaje a Firestore:", error);
+                alert('Error al agregar maquillaje a Firestore. Consulta la consola para más detalles.');
+            });
     } else {
         // Editar maquillaje existente en Firestore
         const maquillajeID = maquillajes[editingIndex].id;
         maquillajesCollection.doc(maquillajeID).update({
-            nombre,
-            fechaLanzamiento,
-            marca,
-            tipo,
-            precio: parseFloat(precio)
-        })
-        .then(() => {
-            console.log("Maquillaje actualizado en Firestore");
-
-            // Actualizar el maquillaje en la lista local
-            maquillajes[editingIndex] = {
-                id: maquillajeID,
                 nombre,
                 fechaLanzamiento,
                 marca,
                 tipo,
                 precio: parseFloat(precio)
-            };
+            })
+            .then(() => {
+                console.log("Maquillaje actualizado en Firestore");
 
-            // Reinicia la variable de edición y el texto del botón
-            editingIndex = -1;
-            document.getElementById('submitBtn').innerText = 'Agregar';
+                // Actualizar el maquillaje en la lista local
+                maquillajes[editingIndex] = {
+                    id: maquillajeID,
+                    nombre,
+                    fechaLanzamiento,
+                    marca,
+                    tipo,
+                    precio: parseFloat(precio)
+                };
 
-            // Actualizar la tabla
-            actualizarTabla();
-        })
-        .catch((error) => {
-            console.error("Error al actualizar maquillaje en Firestore:", error);
-            alert('Error al actualizar maquillaje en Firestore. Consulta la consola para más detalles.');
-        });
+                // Reinicia la variable de edición y el texto del botón
+                editingIndex = -1;
+                document.getElementById('submitBtn').innerText = 'Agregar';
+
+                // Actualizar la tabla
+                actualizarTabla();
+            })
+            .catch((error) => {
+                console.error("Error al actualizar maquillaje en Firestore:", error);
+                alert('Error al actualizar maquillaje en Firestore. Consulta la consola para más detalles.');
+            });
     }
 
     // Limpiar el formulario (ya no es necesario actualizar la tabla aquí)
     document.getElementById('maquillajeForm').reset();
 }
 
-
-function cancelarEdicion() {
-    editingIndex = -1;
-    document.getElementById('submitBtn').innerText = 'Agregar';
-    document.getElementById('maquillajeForm').reset();
-}
-
+// Función para actualizar la tabla
 function actualizarTabla() {
     const table = document.getElementById('maquillajeTable');
     table.innerHTML = '<tr><th>Nombre</th><th>Fecha de Lanzamiento</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Acciones</th></tr>';
@@ -138,6 +102,7 @@ function actualizarTabla() {
     });
 }
 
+// Función para editar un maquillaje
 function editarMaquillaje(index) {
     const maquillaje = maquillajes[index];
     document.getElementById('nombre').value = maquillaje.nombre;
@@ -150,24 +115,8 @@ function editarMaquillaje(index) {
     document.getElementById('submitBtn').innerText = 'Guardar Cambios';
 }
 
+// Función para eliminar un maquillaje
 function eliminarMaquillaje(index) {
     const maquillajeID = maquillajes[index].id;
-
-    // Eliminar maquillaje de Firestore
-    maquillajesCollection.doc(maquillajeID).delete()
-    .then(() => {
-        console.log("Maquillaje eliminado de Firestore");
-
-        // Eliminar maquillaje de la lista local
-        maquillajes.splice(index, 1);
-
-        // Actualizar la tabla
-        actualizarTabla();
-    })
-    .catch((error) => {
-        console.error("Error al eliminar maquillaje de Firestore:", error);
-        alert('Error al eliminar maquillaje de Firestore. Consulta la consola para más detalles.');
-    });
-
-    console.log('Saliendo de altaMaquillaje');
 }
+    // Eliminar
