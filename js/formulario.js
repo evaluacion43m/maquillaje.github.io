@@ -6,7 +6,27 @@ let maquillajes = [];
 let editingIndex = -1;
 
 // Asegúrate de llamar a actualizarTabla() al cargar la página
-window.onload = actualizarTabla;
+window.onload = () => {
+    actualizarTabla();
+
+    // Evento para agregar o editar maquillaje al hacer clic en el botón "Agregar/Guardar Cambios"
+    document.getElementById('submitBtn').addEventListener('click', () => {
+        altaMaquillaje();
+    });
+
+    // Evento para cancelar la edición al hacer clic en el botón "Cancelar"
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+        cancelarEdicion();
+    });
+
+    // Evento para eliminar maquillaje al hacer clic en el botón "Eliminar"
+    document.getElementById('deleteBtn').addEventListener('click', () => {
+        if (editingIndex !== -1) {
+            eliminarMaquillaje(editingIndex);
+            cancelarEdicion();
+        }
+    });
+};
 
 function altaMaquillaje() {
     // Obtén los valores del formulario
@@ -92,6 +112,12 @@ function altaMaquillaje() {
     document.getElementById('maquillajeForm').reset();
 }
 
+function cancelarEdicion() {
+    editingIndex = -1;
+    document.getElementById('submitBtn').innerText = 'Agregar';
+    document.getElementById('maquillajeForm').reset();
+}
+
 function actualizarTabla() {
     const table = document.getElementById('maquillajeTable');
     table.innerHTML = '<tr><th>Nombre</th><th>Fecha de Lanzamiento</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Acciones</th></tr>';
@@ -112,5 +138,32 @@ function actualizarTabla() {
 
 function editarMaquillaje(index) {
     const maquillaje = maquillajes[index];
-    document.getElementById('nombre').value = maquillaje.nombre
+    document.getElementById('nombre').value = maquillaje.nombre;
+    document.getElementById('fechaLanzamiento').value = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
+    document.getElementById('marca').value = maquillaje.marca;
+    document.getElementById('tipo').value = maquillaje.tipo;
+    document.getElementById('precio').value = maquillaje.precio;
+
+    editingIndex = index;
+    document.getElementById('submitBtn').innerText = 'Guardar Cambios';
+}
+
+function eliminarMaquillaje(index) {
+    const maquillajeID = maquillajes[index].id;
+
+    // Eliminar maquillaje de Firestore
+    maquillajesCollection.doc(maquillajeID).delete()
+    .then(() => {
+        console.log("Maquillaje eliminado de Firestore");
+
+        // Eliminar maquillaje de la lista local
+        maquillajes.splice(index, 1);
+
+        // Actualizar la tabla
+        actualizarTabla();
+    })
+    .catch((error) => {
+        console.error("Error al eliminar maquillaje de Firestore:", error);
+        alert('Error al eliminar maquillaje de Firestore. Consulta la consola para más detalles.');
+    });
 }

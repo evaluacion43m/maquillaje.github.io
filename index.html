@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="estilos.css">
 
-    <!-- Carga el núcleo de Firebase JS SDK -->
+    <!-- Incluye Firebase y su configuración primero -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Agrega el manejo de autenticación. -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <!-- Inicializa Firebase con la configuración -->
     <script src="js/init.js"></script>
+
+    <!-- Luego, incluye tu archivo formulario.js que depende de Firebase -->
+    <script src="js/formulario.js"></script>
+
 </head>
 
 <body>
@@ -32,7 +34,7 @@
         <button type="button" onclick="iniciarSesion()">Iniciar Sesión con Google</button>
         <button type="button" onclick="terminaSesion()">Cerrar Sesión</button>
     </div>
-    
+
 
     <h2>Maquillaje</h2>
 
@@ -69,7 +71,6 @@
 
     <!-- Script para la autenticación y formulario -->
     <script src="js/auth.js"></script>
-    <script src="js/formulario.js"></script>
 </body>
 
 </html>
