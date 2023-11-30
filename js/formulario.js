@@ -10,8 +10,7 @@ window.onload = () => {
     actualizarTabla();
 
     // Evento para agregar o editar maquillaje al hacer clic en el botón "Agregar/Guardar Cambios"
-    document.getElementById('submitBtn').addEventListener('click', (event) => {
-        event.preventDefault();
+    document.getElementById('submitBtn').addEventListener('click', () => {
         altaMaquillaje();
     });
 
@@ -32,8 +31,8 @@ window.onload = () => {
 function altaMaquillaje() {
     console.log('Entrando a altaMaquillaje');
     // Obtén los valores del formulario
-    // Continuación del código
-
+    const nombre = document.getElementById('nombre').value;
+    const fechaLanzamientoString = document.getElementById('fechaLanzamiento').value;
     const fechaLanzamiento = new Date(fechaLanzamientoString);
     const marca = document.getElementById('marca').value;
     const tipo = document.getElementById('tipo').value;
@@ -68,7 +67,11 @@ function altaMaquillaje() {
             });
 
             // Actualizar la tabla
-            actualizarTabla();
+            window.onload = () => {
+                actualizarTabla();
+            }
+
+            
         })
         .catch((error) => {
             console.error("Error al agregar maquillaje a Firestore:", error);
@@ -114,7 +117,30 @@ function altaMaquillaje() {
     document.getElementById('maquillajeForm').reset();
 }
 
-// Continuación del código
+
+function cancelarEdicion() {
+    editingIndex = -1;
+    document.getElementById('submitBtn').innerText = 'Agregar';
+    document.getElementById('maquillajeForm').reset();
+}
+
+function actualizarTabla() {
+    const table = document.getElementById('maquillajeTable');
+    table.innerHTML = '<tr><th>Nombre</th><th>Fecha de Lanzamiento</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Acciones</th></tr>';
+
+    maquillajes.forEach((maquillaje, index) => {
+        const row = table.insertRow();
+        row.insertCell(0).innerHTML = maquillaje.nombre;
+        row.insertCell(1).innerHTML = maquillaje.fechaLanzamiento.toDate().toLocaleDateString();
+        row.insertCell(2).innerHTML = maquillaje.marca;
+        row.insertCell(3).innerHTML = maquillaje.tipo;
+        row.insertCell(4).innerHTML = maquillaje.precio;
+        row.insertCell(5).innerHTML = `
+            <button onclick="editarMaquillaje(${index})">Editar</button>
+            <button onclick="eliminarMaquillaje(${index})">Eliminar</button>
+        `;
+    });
+}
 
 function editarMaquillaje(index) {
     const maquillaje = maquillajes[index];
@@ -149,5 +175,3 @@ function eliminarMaquillaje(index) {
 
     console.log('Saliendo de altaMaquillaje');
 }
-
-// Continuación del código
