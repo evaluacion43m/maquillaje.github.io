@@ -2,9 +2,6 @@
 import { altaMaquillaje, getMaquillajes, onGetMaquillajes, eliminarMaquillaje, getMaquillajeById, editarMaquillaje } from "./firebase.js";
 
 const maquillajeForm = document.getElementById("maquillajeForm");
-const maquillajeTable = document.getElementById("maquillajeTable");
-
-let maquillajes = [];
 
 window.addEventListener("DOMContentLoaded", async () => {
   // Asegúrate de llamar a onGetMaquillajes al cargar la página
@@ -17,35 +14,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     actualizarTabla();
   });
 
-  maquillajeForm.addEventListener("submit", (e) => {
+  maquillajeForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    altaMaquillaje();
-  });
-
-  const btnsEdit = maquillajeTable.querySelectorAll('.btn-edit');
-  btnsEdit.forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const doc = await getMaquillajeById(e.target.dataset.id);
-      const maquillaje = doc.data();
-
-      // Corrige el nombre de las propiedades según tu formulario
-      maquillajeForm['nombre'].value = maquillaje.nombre;
-      maquillajeForm['fechaLanzamiento'].value = maquillaje.fechaLanzamiento;
-      maquillajeForm['marca'].value = maquillaje.marca;
-      maquillajeForm['tipo'].value = maquillaje.tipo;
-      maquillajeForm['precio'].value = maquillaje.precio;
-
-      editingIndex = doc.id;
-
-      maquillajeForm['submitBtn'].innerText = "Guardar Cambios";
-    });
+    await altaMaquillaje();
+    // Actualiza la tabla después de agregar o editar
+    actualizarTabla();
   });
 });
-
-// Agrega la función onGetMaquillajes
-function onGetMaquillajes(callback) {
-  return firebase.firestore().collection('maquillajes').onSnapshot(callback);
-}
 
 function actualizarTabla() {
   const table = document.getElementById('maquillajeTable');
@@ -68,11 +43,8 @@ function actualizarTabla() {
   btnsDelete.forEach((btn) => {
     btn.addEventListener('click', ({ target: { dataset } }) => {
       eliminarMaquillaje(dataset.id);
+      // Actualiza la tabla después de eliminar
+      actualizarTabla();
     });
   });
-}
-
-// Agrega la función editarMaquillaje
-function editarMaquillaje(id, datos) {
-  return firebase.firestore().collection('maquillajes').doc(id).update(datos);
 }
