@@ -4,11 +4,18 @@ import { altaMaquillaje, getMaquillajes, onGetMaquillajes, eliminarMaquillaje, g
 const maquillajeForm = document.getElementById("maquillajeForm");
 const maquillajeTable = document.getElementById("maquillajeTable");
 
-let maquillajes = [];  // Asegúrate de tener esta variable definida
+let maquillajes = [];
 
 window.addEventListener("DOMContentLoaded", async () => {
-  // Asegúrate de llamar a actualizarTabla() al cargar la página
-  await actualizarTabla();
+  // Asegúrate de llamar a onGetMaquillajes al cargar la página
+  onGetMaquillajes((querySnapshot) => {
+    maquillajes = [];
+    querySnapshot.forEach((doc) => {
+      const maquillaje = doc.data();
+      maquillajes.push({ id: doc.id, ...maquillaje });
+    });
+    actualizarTabla();
+  });
 
   maquillajeForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -28,19 +35,19 @@ window.addEventListener("DOMContentLoaded", async () => {
       maquillajeForm['tipo'].value = maquillaje.tipo;
       maquillajeForm['precio'].value = maquillaje.precio;
 
-      // Asegúrate de tener esta línea
       editingIndex = doc.id;
 
-      // Asegúrate de tener esta línea
       maquillajeForm['submitBtn'].innerText = "Guardar Cambios";
     });
   });
 });
 
-async function actualizarTabla() {
-  // Obtén los maquillajes antes de actualizar la tabla
-  maquillajes = await getMaquillajes();
+// Agrega la función onGetMaquillajes
+function onGetMaquillajes(callback) {
+  return firebase.firestore().collection('maquillajes').onSnapshot(callback);
+}
 
+function actualizarTabla() {
   const table = document.getElementById('maquillajeTable');
   table.innerHTML = '<tr><th>Nombre</th><th>Fecha de Lanzamiento</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Acciones</th></tr>';
 
@@ -63,4 +70,9 @@ async function actualizarTabla() {
       eliminarMaquillaje(dataset.id);
     });
   });
+}
+
+// Agrega la función editarMaquillaje
+function editarMaquillaje(id, datos) {
+  return firebase.firestore().collection('maquillajes').doc(id).update(datos);
 }
